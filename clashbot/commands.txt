@@ -1,0 +1,63 @@
+🤖 CLASH ROYALE CLAN BOT COMMAND LIST
+
+=== War Commands ===
+!clan              -> Shows general information about the clan.
+!wars              -> Lists the status of clans in the current race.
+!contribution      -> Shows members' medal contributions.
+!warlog            -> Lists the last 5 war histories.
+!members           -> Lists all clan members and their roles.
+!tags              -> Lists names and Clash Royale tags of all clan members.
+!nonparticipants   -> Lists those who didn't participate in the war (Alternative: !sıfırcılar).
+!help              -> Lists all commands (Alternative: !yardim, !yardım).
+
+=== Stats & Prediction ===
+!predict [extra]     -> Predicts war outcome based on last 10 weeks of data.
+!chart               -> Draws performance chart for the last 10 weeks.
+!player_table [#TAG] -> Shows weekly performance table.
+
+=== Profile & Activity ===
+!profile [#TAG/@mention] -> Detailed player profile.
+!activity              -> 0-100 activity score of all members.
+!kicklist [count]      -> Suggests N people with the lowest score (default 5).
+!promote               -> Promotion suggestion based on activity score.
+!promote_history #TAG  -> Player's activity score history.
+
+=== Battle History ===
+!battle_history [#TAG] -> Detailed analysis of the last 25 battles.
+!deck_analysis #TAG    -> Deck and card usage analysis.
+
+=== Achievements & Badges ===
+!my_badges [#TAG]      -> Shows earned badges.
+!badge_leaderboard     -> Members with the most badges.
+!badges                -> Lists all badge descriptions.
+
+=== Deck Suggester ===
+!random_deck           -> Completely random fun deck.
+!deck_suggest [arena]  -> Suggests a deck based on arena level.
+!deck                  -> Suggests a random meta deck.
+!meta                  -> Lists all meta decks.
+
+=== Clan Records ===
+!records               -> Shows all clan records.
+!record_history [cat.] -> Record breaking history (trophies/war/donations/fame/members/activity/total).
+!record_reset [cat.]   -> Resets records (Admin only).
+
+=== Weekly Report ===
+!weekly                -> Instant weekly performance report.
+!weekly_settings       -> Toggles automatic reporting on/off.
+
+=== Donations & Members ===
+!donations             -> Donation leaderboard (Top 10).
+!leechers              -> Leecher report (Alternative: !sömürücüler).
+
+=== Technical & Web ===
+!royaleapi [#TAG]      -> RoyaleAPI extra statistics.
+!rcm_test              -> RoyaleClanManager test.
+
+=== Authority (Admin or LIDER_ROLE_ID) ===
+!grant_auth @user      -> Grants bot usage authority (Leader/Admin only).
+!revoke_auth @user     -> Revokes bot usage authority (Leader/Admin only).
+!auth_list             -> Lists users with bot authority.
+
+Note: Parameters in [ ] are optional.
+LIDER_ROLE_ID must be defined in the .env file for Leader authority.

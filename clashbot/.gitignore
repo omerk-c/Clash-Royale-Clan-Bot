@@ -1,0 +1,41 @@
+# ── Gizli Bilgiler ──────────────────────────────
+.env
+config.json
+
+# ── Python ──────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+*.egg-info/
+
+# ── Veri Dosyaları (kullanıcıya özel) ──────────
+data/
+kupa_data.json
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# ── Log Dosyaları ──────────────────────────────
+*.log
+
+# ── IDE / Editör ───────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── İşletim Sistemi ───────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── matplotlib çıktıları ──────────────────────
+*.png
+*.jpg
+
+# ── Yerel notlar ──────────────────────────────
+komutlar.txt
