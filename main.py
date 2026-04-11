@@ -1,6 +1,6 @@
 """
 Clash Royale Clan Bot – Main entry point.
-All business logic is in Cogs; this file just starts the bot.
+All business logic is in Cogs; this file only starts the bot.
 """
 import logging
 
@@ -57,11 +57,11 @@ EXTENSIONS = [
 
 @bot.event
 async def setup_hook() -> None:
-    """Load database and Cogs before bot starts."""
+    """Load the database and Cogs before the bot starts."""
     await bot.db.connect()
     log.info("Database initialized.")
 
-    # Load guild settings and add to i18n cache
+    # Load guild settings and populate i18n cache
     guild_settings = await bot.db.get_all_guild_settings()
     for setting in guild_settings:
         i18n.set_guild_language(int(setting["guild_id"]), setting["language"])
@@ -72,7 +72,7 @@ async def setup_hook() -> None:
             await bot.load_extension(ext)
             log.info("Cog loaded: %s", ext)
         except Exception:
-            log.exception("Failed to load Cog: %s", ext)
+            log.exception("Failed to load cog: %s", ext)
 
 
 async def on_bot_shutdown():
@@ -94,7 +94,7 @@ bot.close = close
 
 @bot.event
 async def on_ready() -> None:
-    log.info("Bot online: %s (ID: %s)", bot.user, bot.user.id)
+    log.info("Bot active: %s (ID: %s)", bot.user, bot.user.id)
     log.info("Notification channel: %s", CHANNEL_ID)
 
 

@@ -225,22 +225,13 @@ class RecordsCog(commands.Cog, name="Records"):
 
         category_map = {
             "trophies": "clan_trophies",
-            "kupa": "clan_trophies",
             "war": "clan_war_fame",
-            "savas": "clan_war_fame",
-            "savaş": "clan_war_fame",
             "donation": "individual_donations",
             "donations": "individual_donations",
-            "bagis": "individual_donations",
-            "bağış": "individual_donations",
             "fame": "individual_fame",
             "members": "member_count",
-            "uye": "member_count",
-            "üye": "member_count",
             "activity": "activity_score",
-            "aktivite": "activity_score",
             "total": "total_donations",
-            "toplam": "total_donations",
         }
 
         if category:
@@ -320,18 +311,12 @@ class RecordsCog(commands.Cog, name="Records"):
         
         category_map = {
             "trophies": "clan_trophies",
-            "kupa": "clan_trophies",
             "war": "clan_war_fame",
-            "savas": "clan_war_fame",
             "donation": "individual_donations",
-            "bagis": "individual_donations",
             "fame": "individual_fame",
             "members": "member_count",
-            "uye": "member_count",
             "activity": "activity_score",
-            "aktivite": "activity_score",
             "total": "total_donations",
-            "toplam": "total_donations",
         }
 
         if category:

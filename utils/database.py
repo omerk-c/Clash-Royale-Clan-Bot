@@ -1,12 +1,12 @@
 """
-SQLite veritabanı modülü – aiosqlite tabanlı.
-JSON dosyaları yerine kalıcı, sorgulanabilir depolama sağlar.
+SQLite database module – aiosqlite based.
+Provides persistent, queryable storage instead of JSON files.
 
-Tablolar:
-  - players          : Oyuncu anlık verileri (son güncelleme)
-  - donation_history : Haftalık bağış geçmişi
-  - war_history      : Haftalık savaş katkı geçmişi
-  - activity_log     : Aktivite skoru geçmişi
+Tables:
+  - players          : Player snapshot data (last update)
+  - donation_history : Weekly donation history
+  - war_history      : Weekly war contribution history
+  - activity_log     : Activity score history
 """
 import logging
 import os
@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 DB_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 DB_PATH = os.path.join(DB_DIR, "clashbot.db")
 
-# ── SQL Injection Koruması – İzin verilen sütun adları ────────────
+# ── SQL Injection Protection – Allowed column names ────────────────
 ALLOWED_PLAYER_COLUMNS = frozenset({
     "tag", "name", "role", "trophies", "best_trophies", "exp_level",
     "donations", "donations_received", "war_fame", "decks_used",
@@ -29,32 +29,32 @@ ALLOWED_PLAYER_COLUMNS = frozenset({
 
 
 class Database:
-    """Async SQLite veritabanı yöneticisi."""
+    """Async SQLite database manager."""
 
     def __init__(self) -> None:
         self._db: Optional[aiosqlite.Connection] = None
 
-    # ── Bağlantı Yönetimi ────────────────────────────────────────────
+    # ── Connection Management ────────────────────────────────────────
 
     async def connect(self) -> None:
-        """Veritabanına bağlan ve tabloları oluştur."""
+        """Connect to the database and create tables."""
         os.makedirs(DB_DIR, exist_ok=True)
         self._db = await aiosqlite.connect(DB_PATH)
         self._db.row_factory = aiosqlite.Row
         await self._db.execute("PRAGMA journal_mode=WAL")
         await self._db.execute("PRAGMA foreign_keys=ON")
         await self._create_tables()
-        log.info("SQLite veritabanı bağlantısı kuruldu: %s", DB_PATH)
+        log.info("SQLite database connection established: %s", DB_PATH)
 
     async def close(self) -> None:
-        """Veritabanı bağlantısını kapat."""
+        """Close the database connection."""
         if self._db:
             await self._db.close()
             self._db = None
-            log.info("SQLite veritabanı bağlantısı kapatıldı.")
+            log.info("SQLite database connection closed.")
 
     async def _create_tables(self) -> None:
-        """Gerekli tabloları oluştur (yoksa)."""
+        """Create required tables (if they don't exist)."""
         await self._db.executescript("""
             CREATE TABLE IF NOT EXISTS players (
                 tag             TEXT PRIMARY KEY,
@@ -121,19 +121,19 @@ class Database:
         """)
         await self._db.commit()
 
-    # ── Oyuncu CRUD ──────────────────────────────────────────────────
+    # ── Player CRUD ──────────────────────────────────────────────────
 
     async def upsert_player(self, tag: str, **kwargs) -> None:
-        """Oyuncu ekle veya güncelle."""
+        """Insert or update a player."""
         now = datetime.now(timezone.utc).isoformat()
         kwargs["updated_at"] = now
         kwargs["tag"] = tag
 
-        # SQL Injection koruması: yalnızca beyaz listedeki sütun adlarına izin ver
+        # SQL Injection protection: only allow whitelisted column names
         invalid_keys = set(kwargs.keys()) - ALLOWED_PLAYER_COLUMNS
         if invalid_keys:
             raise ValueError(
-                f"Geçersiz sütun adı tespit edildi: {invalid_keys}"
+                f"Invalid column name detected: {invalid_keys}"
             )
 
         columns = ", ".join(kwargs.keys())
@@ -151,7 +151,7 @@ class Database:
         await self._db.commit()
 
     async def upsert_many_players(self, players: list[dict]) -> None:
-        """Birden fazla oyuncuyu toplu ekle/güncelle."""
+        """Bulk insert/update multiple players."""
         now = datetime.now(timezone.utc).isoformat()
         for p in players:
             await self._db.execute("""
@@ -169,7 +169,7 @@ class Database:
                     updated_at=excluded.updated_at
             """, (
                 p.get("tag"),
-                p.get("name", "Bilinmiyor"),
+                p.get("name", "Unknown"),
                 p.get("role", "member"),
                 p.get("trophies", 0),
                 p.get("bestTrophies", 0),
@@ -181,7 +181,7 @@ class Database:
         await self._db.commit()
 
     async def get_player(self, tag: str) -> Optional[dict]:
-        """Tek oyuncu verisi döndürür."""
+        """Returns a single player's data."""
         cursor = await self._db.execute(
             "SELECT * FROM players WHERE tag = ?", (tag,)
         )
@@ -191,18 +191,18 @@ class Database:
         return None
 
     async def get_all_players(self) -> list[dict]:
-        """Tüm oyuncuları döndürür."""
+        """Returns all players."""
         cursor = await self._db.execute("SELECT * FROM players ORDER BY trophies DESC")
         rows = await cursor.fetchall()
         return [dict(r) for r in rows]
 
-    # ── Bağış Geçmişi ───────────────────────────────────────────────
+    # ── Donation History ───────────────────────────────────────────────
 
     async def save_donation_snapshot(
         self, player_tag: str, player_name: str,
         donations: int, donations_received: int, week_start: str
     ) -> None:
-        """Haftalık bağış anlık görüntüsü kaydet."""
+        """Save a weekly donation snapshot."""
         now = datetime.now(timezone.utc).isoformat()
         await self._db.execute("""
             INSERT INTO donation_history
@@ -216,7 +216,7 @@ class Database:
         await self._db.commit()
 
     async def get_donation_history(self, player_tag: str, limit: int = 10) -> list[dict]:
-        """Oyuncunun son N haftalık bağış geçmişi."""
+        """Returns a player's last N weeks of donation history."""
         cursor = await self._db.execute("""
             SELECT * FROM donation_history
             WHERE player_tag = ?
@@ -226,13 +226,13 @@ class Database:
         rows = await cursor.fetchall()
         return [dict(r) for r in rows]
 
-    # ── Savaş Geçmişi ───────────────────────────────────────────────
+    # ── War History ───────────────────────────────────────────────────
 
     async def save_war_snapshot(
         self, player_tag: str, player_name: str,
         fame: int, decks_used: int, boat_attacks: int, week_start: str
     ) -> None:
-        """Haftalık savaş anlık görüntüsü kaydet."""
+        """Save a weekly war snapshot."""
         now = datetime.now(timezone.utc).isoformat()
         await self._db.execute("""
             INSERT INTO war_history
@@ -247,7 +247,7 @@ class Database:
         await self._db.commit()
 
     async def get_war_history(self, player_tag: str, limit: int = 10) -> list[dict]:
-        """Oyuncunun son N haftalık savaş geçmişi."""
+        """Returns a player's last N weeks of war history."""
         cursor = await self._db.execute("""
             SELECT * FROM war_history
             WHERE player_tag = ?
@@ -257,14 +257,14 @@ class Database:
         rows = await cursor.fetchall()
         return [dict(r) for r in rows]
 
-    # ── Aktivite Skoru ───────────────────────────────────────────────
+    # ── Activity Score ───────────────────────────────────────────────
 
     async def save_activity_score(
         self, player_tag: str, player_name: str,
         score: float, donation_score: float,
         war_score: float, trophy_score: float
     ) -> None:
-        """Aktivite skorunu kaydet."""
+        """Save an activity score."""
         today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         await self._db.execute("""
             INSERT INTO activity_log
@@ -279,7 +279,7 @@ class Database:
         await self._db.commit()
 
     async def get_activity_scores(self, date: str = None) -> list[dict]:
-        """Belirli bir günün aktivite skorlarını döndürür."""
+        """Returns activity scores for a specific day."""
         if date is None:
             date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         cursor = await self._db.execute("""
@@ -293,7 +293,7 @@ class Database:
     async def get_player_activity_history(
         self, player_tag: str, limit: int = 30
     ) -> list[dict]:
-        """Oyuncunun son N günlük aktivite skoru geçmişi."""
+        """Returns a player's last N days of activity score history."""
         cursor = await self._db.execute("""
             SELECT * FROM activity_log
             WHERE player_tag = ?
@@ -303,10 +303,10 @@ class Database:
         rows = await cursor.fetchall()
         return [dict(r) for r in rows]
 
-    # ── Kupa Anlık Görüntüsü ────────────────────────────────────────
+    # ── Trophy Snapshots ────────────────────────────────────────────
 
     async def save_trophy_snapshot(self, player_tag: str, trophies: int) -> None:
-        """Günlük kupa anlık görüntüsü kaydet."""
+        """Save a daily trophy snapshot."""
         today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         await self._db.execute("""
             INSERT INTO trophy_snapshots (player_tag, trophies, recorded_at)
@@ -317,7 +317,7 @@ class Database:
         await self._db.commit()
 
     async def get_trophy_change(self, player_tag: str, days: int = 7) -> int:
-        """Son N gündeki kupa değişimini hesaplar."""
+        """Calculates trophy change over the last N days."""
         cursor = await self._db.execute("""
             SELECT trophies FROM trophy_snapshots
             WHERE player_tag = ?
@@ -338,10 +338,10 @@ class Database:
             return newest["trophies"] - oldest["trophies"]
         return 0
 
-    # ── İstatistik Sorguları ─────────────────────────────────────────
+    # ── Statistics Queries ─────────────────────────────────────────
 
     async def get_top_donors(self, limit: int = 10) -> list[dict]:
-        """En çok bağış yapan oyuncular (mevcut hafta)."""
+        """Top donating players (current week)."""
         cursor = await self._db.execute("""
             SELECT tag, name, donations, donations_received
             FROM players
@@ -352,7 +352,7 @@ class Database:
         return [dict(r) for r in rows]
 
     async def get_clan_donation_average(self) -> float:
-        """Klan bağış ortalaması."""
+        """Clan donation average."""
         cursor = await self._db.execute(
             "SELECT AVG(donations) as avg_don FROM players"
         )
@@ -360,15 +360,15 @@ class Database:
         return row["avg_don"] if row and row["avg_don"] else 0.0
 
     async def get_player_count(self) -> int:
-        """Veritabanındaki oyuncu sayısı."""
+        """Number of players in the database."""
         cursor = await self._db.execute("SELECT COUNT(*) as cnt FROM players")
         row = await cursor.fetchone()
         return row["cnt"] if row else 0
 
-    # ── Sunucu Ayarları ──────────────────────────────────────────────
+    # ── Server Settings ──────────────────────────────────────────────
 
     async def get_guild_language(self, guild_id: int) -> str:
-        """Sunucunun dil tercihini döndürür."""
+        """Returns the guild's language preference."""
         cursor = await self._db.execute(
             "SELECT language FROM server_settings WHERE guild_id = ?", (str(guild_id),)
         )
@@ -376,7 +376,7 @@ class Database:
         return row["language"] if row else "en"
 
     async def set_guild_language(self, guild_id: int, lang: str) -> None:
-        """Sunucunun dil tercihini günceller."""
+        """Updates the guild's language preference."""
         await self._db.execute("""
             INSERT INTO server_settings (guild_id, language)
             VALUES (?, ?)
@@ -385,7 +385,7 @@ class Database:
         await self._db.commit()
 
     async def get_all_guild_settings(self) -> list[dict]:
-        """Tüm sunucu ayarlarını döndürür (başlangıçta cache yüklemek için)."""
+        """Returns all guild settings (for loading cache at startup)."""
         cursor = await self._db.execute("SELECT * FROM server_settings")
         rows = await cursor.fetchall()
         return [dict(r) for r in rows]

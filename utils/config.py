@@ -1,5 +1,5 @@
 """
-Configuration module – loads values from .env file.
+Configuration module – loads values from the .env file.
 """
 import os
 from dotenv import load_dotenv
@@ -12,13 +12,14 @@ CLAN_TAG: str = os.getenv("CLAN_TAG", "")
 CHANNEL_ID: int = int(os.getenv("CHANNEL_ID", "0"))
 LEADER_ROLE_ID: int = int(os.getenv("LEADER_ROLE_ID", "0"))
 
+
 def encode_tag(tag: str) -> str:
-    """Convert Clash Royale tag to URL-safe format: #ABC → %23ABC"""
+    """Converts a Clash Royale tag to URL-safe format: #ABC → %23ABC"""
     if not tag:
         return ""
     return tag.replace("#", "%23")
 
 
 def clean_tag(tag: str) -> str:
-    """Remove # from tag and convert to uppercase for comparison."""
+    """Strips the # sign from a tag and uppercases it (for comparison)."""
     return tag.replace("#", "").upper()

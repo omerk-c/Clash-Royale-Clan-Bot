@@ -13,52 +13,52 @@ CHANNEL_CONFIG_PATH = os.path.join(
     os.path.dirname(__file__), "..", "data", "channel_config.json"
 )
 
-# ── Eşzamanlılık koruması ──────────────────────────────────────────
+# ── Concurrency protection ──────────────────────────────────────────
 _config_lock = threading.Lock()
 
-# ── Kanal Kategorileri ──────────────────────────────────────────────
+# ── Channel Categories ──────────────────────────────────────────────
 
 CHANNEL_TYPES = {
     "main": {
         "emoji": "📢",
-        "name": "Ana Kanal",
-        "description": "Genel bildirimler ve varsayılan kanal",
+        "name": "Main Channel",
+        "description": "General notifications and default channel",
     },
     "war": {
         "emoji": "⚔️",
-        "name": "Savaş Bildirimleri",
-        "description": "Savaş hatırlatıcı, katılmayanlar, savaş durumu",
+        "name": "War Notifications",
+        "description": "War reminders, non-participants, war status",
     },
     "badges": {
         "emoji": "🏅",
-        "name": "Rozet Bildirimleri",
-        "description": "Yeni kazanılan rozetler ve başarı duyuruları",
+        "name": "Badge Notifications",
+        "description": "Newly earned badges and achievement announcements",
     },
     "records": {
         "emoji": "🏆",
-        "name": "Rekor Bildirimleri",
-        "description": "Yeni rekor kırılma duyuruları",
+        "name": "Record Notifications",
+        "description": "New record-breaking announcements",
     },
     "members": {
         "emoji": "👥",
-        "name": "Üye Hareketleri",
-        "description": "Üye giriş/çıkış bildirimleri",
+        "name": "Member Activity",
+        "description": "Member join/leave notifications",
     },
     "reports": {
         "emoji": "📊",
-        "name": "Raporlar",
-        "description": "Haftalık rapor, periyodik klan özeti",
+        "name": "Reports",
+        "description": "Weekly report, periodic clan summary",
     },
     "activity": {
         "emoji": "📈",
-        "name": "Aktivite Takibi",
-        "description": "Saatlik aktivite özeti, bağış/savaş değişimleri",
+        "name": "Activity Tracking",
+        "description": "Hourly activity summary, donation/war changes",
     },
 }
 
 
 def _load_channel_config() -> dict:
-    """Kanal yapılandırmasını JSON'dan yükler."""
+    """Loads channel configuration from JSON."""
     with _config_lock:
         try:
             with open(CHANNEL_CONFIG_PATH, encoding="utf-8") as f:
@@ -68,7 +68,7 @@ def _load_channel_config() -> dict:
 
 
 def _save_channel_config(config: dict) -> None:
-    """Kanal yapılandırmasını JSON'a kaydeder."""
+    """Saves channel configuration to JSON."""
     with _config_lock:
         os.makedirs(os.path.dirname(CHANNEL_CONFIG_PATH), exist_ok=True)
         with open(CHANNEL_CONFIG_PATH, "w", encoding="utf-8") as f:
@@ -77,8 +77,8 @@ def _save_channel_config(config: dict) -> None:
 
 def set_channel(channel_type: str, channel_id: int) -> bool:
     """
-    Belirli bir bildirim türü için kanal atar.
-    Returns: True ise başarılı.
+    Assigns a channel for a specific notification type.
+    Returns: True if successful.
     """
     if channel_type not in CHANNEL_TYPES:
         return False
@@ -91,8 +91,8 @@ def set_channel(channel_type: str, channel_id: int) -> bool:
 
 def remove_channel(channel_type: str) -> bool:
     """
-    Belirli bir bildirim türü için kanal atamasını kaldırır.
-    Varsayılan (main) kanala düşer.
+    Removes channel assignment for a specific notification type.
+    Falls back to the default (main) channel.
     """
     if channel_type not in CHANNEL_TYPES:
         return False
@@ -106,27 +106,27 @@ def remove_channel(channel_type: str) -> bool:
 
 def get_channel_id(channel_type: str, default_channel_id: int) -> int:
     """
-    Belirli bir bildirim türü için kanal ID'si döndürür.
-    Atanmamışsa varsayılan (main) kanalını, o da yoksa default_channel_id'yi döndürür.
+    Returns the channel ID for a specific notification type.
+    Falls back to the main channel if unassigned, then to default_channel_id.
     """
     config = _load_channel_config()
 
-    # Önce istenen türün kanalını kontrol et
+    # First check the requested type's channel
     channel_id = config.get(channel_type)
     if channel_id:
         return int(channel_id)
 
-    # Yoksa main kanalını kontrol et
+    # Otherwise check the main channel
     main_id = config.get("main")
     if main_id:
         return int(main_id)
 
-    # Hiçbiri yoksa .env'deki varsayılanı kullan
+    # If none found, use the default from .env
     return default_channel_id
 
 
 def get_all_channels() -> dict[str, Optional[int]]:
-    """Tüm kanal atamalarını döndürür."""
+    """Returns all channel assignments."""
     config = _load_channel_config()
     result = {}
     for channel_type in CHANNEL_TYPES:
@@ -138,12 +138,12 @@ async def get_notification_channel(
     bot: commands.Bot, channel_type: str, default_channel_id: int
 ) -> Optional[discord.TextChannel]:
     """
-    Bot üzerinden bildirim kanalını döndürür.
-    Kanal bulunamazsa None döner.
+    Returns the notification channel via the bot.
+    Returns None if the channel is not found.
     """
     cid = get_channel_id(channel_type, default_channel_id)
     channel = bot.get_channel(cid)
     if channel is None:
-        # Fallback: varsayılan kanal
+        # Fallback: default channel
         channel = bot.get_channel(default_channel_id)
     return channel

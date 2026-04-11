@@ -5,7 +5,7 @@ import logging
 import discord
 from discord.ext import commands
 
-from utils.config import LIDER_ROLE_ID
+from utils.config import LEADER_ROLE_ID
 import utils.i18n as i18n
 
 log = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ class AuthCog(commands.Cog, name="Auth"):
             if isinstance(ctx.author, discord.Member):
                 is_admin_or_leader = (
                     ctx.author.guild_permissions.administrator or
-                    (LIDER_ROLE_ID > 0 and any(role.id == LIDER_ROLE_ID for role in ctx.author.roles))
+                    (LEADER_ROLE_ID > 0 and any(role.id == LEADER_ROLE_ID for role in ctx.author.roles))
                 )
             
             # Authorized user list check (from JSON)

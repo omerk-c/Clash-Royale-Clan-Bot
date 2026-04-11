@@ -54,10 +54,10 @@
 !royaleapi [#TAG]      -> RoyaleAPI extra statistics.
 !rcm_test              -> RoyaleClanManager test.
 
-=== Authority (Admin or LIDER_ROLE_ID) ===
+=== Authority (Admin or LEADER_ROLE_ID) ===
 !grant_auth @user      -> Grants bot usage authority (Leader/Admin only).
 !revoke_auth @user     -> Revokes bot usage authority (Leader/Admin only).
 !auth_list             -> Lists users with bot authority.
 
 Note: Parameters in [ ] are optional.
-LIDER_ROLE_ID must be defined in the .env file for Leader authority.
+LEADER_ROLE_ID must be defined in the .env file for Leader authority.

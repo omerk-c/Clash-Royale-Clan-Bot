@@ -78,11 +78,11 @@ git clone https://github.com/omerk-c/clashbot.git
 cd clashbot
 
 # Create and activate a virtual environment
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate  # For Windows: .venv\Scripts\activate
 
 # Install dependencies
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 
 # Create the environment variables file
 cp .env.example .env
@@ -116,10 +116,10 @@ To start the bot:
 
 ```bash
 # With the virtual environment active:
-python main.py
+python3 main.py
 
 # Or directly with Python in the virtual environment:
-.venv/bin/python main.py
+.venv/bin/python3 main.py
 ```
 
 ---
@@ -216,6 +216,7 @@ clashbot/
 │   ├── promotion.py             # Promotion suggestions
 │   ├── records.py               # Clan records
 │   ├── scraper.py               # RoyaleAPI web scraping
+│   ├── settings.py              # Server settings & language
 │   ├── stats.py                 # Statistical charts
 │   ├── tracker.py               # Change tracking & member join/leave
 │   ├── war.py                   # War commands, member tags, reminders
@@ -236,13 +237,10 @@ clashbot/
 │   ├── en.json                  # English string mapping
 │   └── tr.json                  # Turkish string mapping
 ├── main.py                      # Bot main entry point
+├── check.py                     # Locale key parity checker
 ├── requirements.txt             # Python dependencies
 ├── .env.example                 # Example environment variables file
-├── .env                         # Environment variables (not in git)
-├── main.bat                     # Windows startup script
-├── run_bot.vbs                  # Background startup (Windows)
-├── close_bot.vbs                # Bot stop script (Windows)
-└── stop_bot.vbs                 # Bot stop script (Windows)
+└── .env                         # Environment variables (not in git)
 ```
 
 > **Note:** The `data/` folder is automatically created when the bot runs for the first time. This folder is included in `.gitignore` and is not added to the repo.

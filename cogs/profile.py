@@ -53,13 +53,13 @@ def _reverse_linked_accounts() -> dict[str, str]:
 def _arena_emoji(arena_name: str) -> str:
     """Returns emoji based on arena name."""
     arena_lower = arena_name.lower()
-    if "legendary" in arena_lower or "efsanevi" in arena_lower:
+    if "legendary" in arena_lower:
         return "🏆"
-    elif "champion" in arena_lower or "şampiyon" in arena_lower:
+    elif "champion" in arena_lower:
         return "👑"
-    elif "master" in arena_lower or "usta" in arena_lower:
+    elif "master" in arena_lower:
         return "⭐"
-    elif "challenger" in arena_lower or "meydan" in arena_lower:
+    elif "challenger" in arena_lower:
         return "🎯"
     return "🏟️"
 
