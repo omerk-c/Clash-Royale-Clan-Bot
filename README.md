@@ -107,10 +107,10 @@ CLAN_TAG=#YOURCLANTAG
 CHANNEL_ID=discord_channel_id
 
 # Leader Role ID – Required for permission checks (Copy the role ID with Developer Mode on)
-LIDER_ROLE_ID=discord_leader_role_id
+LEADER_ROLE_ID=discord_leader_role_id
 ```
 
-> **⚠️ Important:** If `LIDER_ROLE_ID` is not set, only users with Discord Administrator permissions can use bot management commands (`!grant_perm`, `!revoke_perm`). This value must be entered correctly to authorize via the Leader role.
+> **⚠️ Important:** If `LEADER_ROLE_ID` is not set, only users with Discord Administrator permissions can use bot management commands (`!grant_perm`, `!revoke_perm`). This value must be entered correctly to authorize via the Leader role.
 
 To start the bot:
 
