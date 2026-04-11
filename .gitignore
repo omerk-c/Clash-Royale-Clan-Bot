@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+
+# Configuration
+.env
+clashbot/.env
+config.json
+
+# Data & Databases
+data/
+clashbot/data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+trophy_data.json
+clashbot/trophy_data.json
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# Mats
+*.png
+*.jpg
+
+# Bot Files
+clashbot/kupa_data.json
+clashbot/komutlar.txt
