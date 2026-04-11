@@ -1,4 +1,4 @@
-# ── Gizli Bilgiler ──────────────────────────────
+# ── Secret Data ──────────────────────────────
 .env
 config.json
 
@@ -11,31 +11,32 @@ __pycache__/
 venv/
 *.egg-info/
 
-# ── Veri Dosyaları (kullanıcıya özel) ──────────
+# ── Data Files (user-specific) ──────────
 data/
+trophy_data.json
 kupa_data.json
 *.db
 *.db-journal
 *.db-wal
 *.db-shm
 
-# ── Log Dosyaları ──────────────────────────────
+# ── Log Files ──────────────────────────────────
 *.log
 
-# ── IDE / Editör ───────────────────────────────
+# ── IDE / Editor ───────────────────────────────
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# ── İşletim Sistemi ───────────────────────────
+# ── Operating System ───────────────────────────
 .DS_Store
 Thumbs.db
 
-# ── matplotlib çıktıları ──────────────────────
+# ── Matplotlib outputs ──────────────────────
 *.png
 *.jpg
 
-# ── Yerel notlar ──────────────────────────────
+# ── Local notes ──────────────────────────────
 komutlar.txt
