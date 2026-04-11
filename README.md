@@ -74,8 +74,8 @@ Clashbot supports a dynamic internationalization system.
 
 ```bash
 # Clone the repo and enter the directory
-git clone https://github.com/omerk-c/clashbot.git
-cd clashbot
+git clone https://github.com/omerk-c/Clash-Royale-Clan-Bot
+cd Clash-Royale-Clan-Bot
 
 # Create and activate a virtual environment
 python3 -m venv .venv
