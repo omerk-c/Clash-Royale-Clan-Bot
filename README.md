@@ -2,7 +2,7 @@
 
 # 🛡️ Clash Royale Clan Bot
 
-**Discord üzerinden klan yönetimini otomatikleştiren, savaş takibi, aktivite skorlaması, rozet sistemi ve haftalık raporlama sunan kapsamlı bir yardımcı bot.**
+**A comprehensive Discord bot that automates clan management: war tracking, activity scoring, an achievement/badge system, and automated weekly reporting.**
 
 ![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
 ![Discord.py](https://img.shields.io/badge/discord.py-2.3.0+-blue.svg)
@@ -13,244 +13,244 @@
 
 ---
 
-> ⚠️ **Tek klan / tek sunucu için tasarlanmıştır.** Bot, `.env` dosyasındaki tek bir `CLAN_TAG` üzerinden çalışır ve bildirim kanalları bot genelinde (sunucuya özel değil) tutulur. Birden fazla Discord sunucusuna eklenirse yalnızca dil tercihi sunucuya göre değişir; klan verisi ve kanal ataması ortaktır.
+> ⚠️ **Built for a single clan / single server.** The bot runs against one `CLAN_TAG` from `.env`, and notification channels are stored bot-wide rather than per-guild. If added to multiple Discord servers, only the language preference is per-guild — clan data and channel assignments are shared across all of them.
 
-## 📋 İçindekiler
+## 📋 Table of Contents
 
-- [Özellikler](#-özellikler)
-- [Yetkilendirme Modeli](#-yetkilendirme-modeli)
-- [Kurulum](#-kurulum)
-- [Komut Listesi](#-komut-listesi)
-- [Çoklu Dil (i18n)](#-çoklu-dil-i18n)
-- [Proje Yapısı](#-proje-yapısı)
-- [Otomatik Görevler](#-otomatik-görevler)
-- [Veritabanı](#-veritabanı)
-- [Bilinen Sınırlamalar](#-bilinen-sınırlamalar)
-- [Katkıda Bulunma](#-katkıda-bulunma)
-
----
-
-## ✨ Özellikler
-
-### ⚔️ Savaş ve Klan Yönetimi
-- Aktif River Race durumu, klan sıralaması, deste kullanımı
-- Katkı sıralaması (madalya bazlı)
-- Son 5 savaşın özeti
-- Katılmayan (0 madalyalı) üyelerin listesi
-- Üye tag/isim listesi
-
-### 👥 Üye Takibi
-- Katılım/ayrılış otomatik algılama (giden üyenin başka bir klana geçip geçmediğini API üzerinden kontrol eder)
-  - 🟡 Başka klana geçti → yeni klan adıyla bildirilir
-  - 🔴 Klansız → "atıldı" olarak işaretlenir
-  - 🟢 Yeni katılım
-
-### 📊 Aktivite ve Analiz
-- **Aktivite Skoru (0-100):** Bağış (%30) + Savaş (%50) + Kupa (%20)
-- Düşük skorlu üyeler için özelleştirilebilir liste
-- İstatistiksel Elder/Co-Leader terfi önerileri
-- `matplotlib` ile klan/rakip karşılaştırmalı grafik
-- Normal dağılım tabanlı savaş sonucu tahmini
-
-### 🏅 Rozet Sistemi
-- 9 farklı rozet (First Blood, Fire Streak, Donation King, MVP, Legend, vb.)
-- Her 6 saatte bir otomatik kontrol
-- Rozet sayısına göre liderlik tablosu
-
-### 🃏 Deste ve Diğer Araçlar
-- Arena seviyesine göre deste önerisi, rastgele eğlence destesi
-- Oyuncu bazlı deste/kart kullanım analizi
-- Klan rekorları ve rekor kırılma geçmişi
-- Haftalık otomatik/manuel performans raporu
+- [Features](#-features)
+- [Authorization Model](#-authorization-model)
+- [Installation](#-installation)
+- [Command List](#-command-list)
+- [Multi-Language (i18n)](#-multi-language-i18n)
+- [Project Structure](#-project-structure)
+- [Automated Tasks](#-automated-tasks)
+- [Database](#-database)
+- [Known Limitations](#-known-limitations)
+- [Contributing](#-contributing)
 
 ---
 
-## 🔐 Yetkilendirme Modeli
+## ✨ Features
 
-Bu bot **varsayılan olarak kilitlidir.** Sunucuya eklendiğinde hiçbir komut, aşağıdaki üç gruptan birine girmeyen kullanıcılar için çalışmaz:
+### ⚔️ War & Clan Management
+- Active River Race status, clan ranking, deck usage
+- Contribution ranking (medal-based)
+- Summary of the last 5 wars
+- List of non-participating (0-medal) members
+- Member tag/name listing
 
-1. Discord **Administrator** yetkisine sahip üyeler
-2. `.env` içindeki `LEADER_ROLE_ID` rolüne sahip üyeler
-3. `!grant_auth` komutuyla açıkça yetkilendirilmiş kullanıcılar
+### 👥 Member Tracking
+- Automatic join/leave detection (checks the API to see whether a departing member moved to another clan)
+  - 🟡 Moved to another clan → reported with the new clan's name
+  - 🔴 No clan → flagged as "kicked"
+  - 🟢 New join
 
-> Bu, sadece `grant_auth`/`revoke_auth` gibi yönetim komutlarıyla sınırlı değildir — `!clan`, `!wars` gibi bilgi amaçlı komutlar da dahil olmak üzere **tüm komutlar** bu kontrolden geçer. Botu ekledikten sonra hiçbir şeyin çalışmadığını görürseniz muhtemelen `LEADER_ROLE_ID` ayarlanmamıştır veya kullanıcı Administrator değildir.
+### 📊 Activity & Analysis
+- **Activity Score (0-100):** Donations (30%) + War (50%) + Trophies (20%)
+- Customizable list of low-scoring members
+- Statistically-driven Elder/Co-Leader promotion suggestions
+- Clan vs. opponent comparison chart via `matplotlib`
+- War outcome prediction based on a normal distribution
 
-| Komut | Açıklama | Kim kullanabilir |
+### 🏅 Badge System
+- 9 different badges (First Blood, Fire Streak, Donation King, MVP, Legend, etc.)
+- Automatic check every 6 hours
+- Leaderboard ranked by badge count
+
+### 🃏 Decks & Other Tools
+- Deck suggestions by arena level, random fun decks
+- Per-player deck/card usage analysis
+- Clan records and record-breaking history
+- Automatic/manual weekly performance report
+
+---
+
+## 🔐 Authorization Model
+
+This bot is **locked by default.** Once added to a server, no command works for anyone outside these three groups:
+
+1. Members with Discord **Administrator** permission
+2. Members holding the role set as `LEADER_ROLE_ID` in `.env`
+3. Users explicitly authorized via `!grant_auth`
+
+> This isn't limited to management commands like `grant_auth`/`revoke_auth` — **every command**, including read-only ones like `!clan` or `!wars`, goes through this check. If nothing seems to respond after inviting the bot, it's most likely because `LEADER_ROLE_ID` isn't set and the user isn't an Administrator.
+
+| Command | Description | Who can use it |
 | --- | --- | --- |
-| `!grant_auth @kişi` (`!yetki_ver`) | Kullanıcıya bot kullanım yetkisi verir | Admin / Leader |
-| `!revoke_auth @kişi` (`!yetki_al`) | Kullanıcının yetkisini geri alır | Admin / Leader |
+| `!grant_auth @member` (`!yetki_ver`) | Grants a user permission to use the bot | Admin / Leader |
+| `!revoke_auth @member` (`!yetki_al`) | Revokes a user's permission | Admin / Leader |
 
 ---
 
-## 🚀 Kurulum
+## 🚀 Installation
 
-### 1. Gereksinimler
+### 1. Requirements
 
 - Python 3.10+
 - Discord Bot Token — [Discord Developer Portal](https://discord.com/developers/applications)
 - Clash Royale API Token — [Clash Royale Developer Portal](https://developer.clashroyale.com)
-  *(CR API IP tabanlıdır — sunucunuzun IP adresini whitelist'e eklemeyi unutmayın.)*
+  *(The CR API is IP-based — don't forget to whitelist your server's IP address.)*
 
-### 2. Kurulum Adımları
+### 2. Installation Steps
 
 ```bash
-# Depoyu klonlayın
+# Clone the repo
 git clone https://github.com/omerk-c/Clash-Royale-Clan-Bot
 cd Clash-Royale-Clan-Bot
 
-# Sanal ortam oluşturun ve etkinleştirin
+# Create and activate a virtual environment
 python3 -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 
-# Bağımlılıkları kurun
+# Install dependencies
 pip3 install -r requirements.txt
 
-# Ortam değişkenleri dosyasını oluşturun
+# Create the environment variables file
 cp .env.example .env
-# .env dosyasını kendi token/anahtar değerlerinizle doldurun
+# Edit .env with your own token/key values
 ```
 
-### 3. Yapılandırma (`.env`)
+### 3. Configuration (`.env`)
 
 ```env
 # Discord Bot Token
 DISCORD_TOKEN=your_discord_bot_token
 
-# Clash Royale API Anahtarı
+# Clash Royale API Key
 CR_API_KEY=your_clash_royale_api_token
 
-# Klan Tag'i (# işaretiyle birlikte)
+# Clan tag (including the # sign)
 CLAN_TAG=#YOURCLANTAG
 
-# Varsayılan bildirim kanalı ID'si
+# Default notification channel ID
 CHANNEL_ID=discord_channel_id
 
-# Leader rolü ID'si (yetkilendirme için)
+# Leader role ID (used for authorization)
 LEADER_ROLE_ID=discord_leader_role_id
 ```
 
-> ⚠️ `LEADER_ROLE_ID` girilmezse yalnızca Discord **Administrator** yetkisine sahip kullanıcılar botu kullanabilir.
+> ⚠️ If `LEADER_ROLE_ID` is left empty, only users with Discord **Administrator** permission can use the bot.
 
-### 4. Başlatma
+### 4. Start the Bot
 
 ```bash
 python3 main.py
-# veya
+# or
 .venv/bin/python3 main.py
 ```
 
 ---
 
-## 📖 Komut Listesi
+## 📖 Command List
 
-Tüm komutlar `!` öneki ile kullanılır; parantez içindekiler Türkçe alias'lardır.
+All commands use the `!` prefix; items in parentheses are Turkish aliases.
 
 <details>
-<summary><strong>⚔️ Savaş ve Klan</strong></summary>
+<summary><strong>⚔️ War & Clan</strong></summary>
 
-| Komut | Alias | Açıklama |
+| Command | Alias | Description |
 | --- | --- | --- |
-| `!clan` | `!klan` | Genel klan bilgisi |
-| `!wars` | `!savaslar` | Aktif River Race durumu |
-| `!contribution` | `!katki` | Katkı sıralaması (top 10) |
-| `!warlog` | — | Son 5 savaşın özeti |
-| `!list` | `!liste` | Üye listesi + roller |
-| `!tags` | — | Üye isim ve Clash Royale tag'leri |
-| `!inactive` | `!katilmayanlar`, `!sifircilar` | 0 madalyalı üyeler |
+| `!clan` | `!klan` | General clan info |
+| `!wars` | `!savaslar` | Active River Race status |
+| `!contribution` | `!katki` | Contribution ranking (top 10) |
+| `!warlog` | — | Summary of the last 5 wars |
+| `!list` | `!liste` | Member list + roles |
+| `!tags` | — | Member names and Clash Royale tags |
+| `!inactive` | `!katilmayanlar`, `!sifircilar` | 0-medal members |
 
 </details>
 
 <details>
-<summary><strong>📊 İstatistik ve Profil</strong></summary>
+<summary><strong>📊 Stats & Profile</strong></summary>
 
-| Komut | Alias | Açıklama |
+| Command | Alias | Description |
 | --- | --- | --- |
-| `!profile [#TAG / @kullanıcı]` | `!profil` | Detaylı oyuncu profili |
-| `!activity` | `!aktivite` | Tüm üyelerin aktivite skoru (0-100) |
-| `!kicklist [sayı]` | — | En düşük skorlu N kişi (varsayılan 5) |
-| `!promotion` | `!terfi` | Elder/Co-Leader terfi önerisi |
-| `!promotion_history #TAG` | `!terfi_gecmis` | Oyuncunun aktivite skoru geçmişi |
-| `!graph` | `!grafik` | Klan/rakip fame karşılaştırma grafiği |
-| `!player_board [#TAG]` | `!oyuncu_tablo` | Haftalık savaş performans tablosu |
-| `!prediction [ekstra]` | `!tahmin` | Normal dağılımla savaş sonucu tahmini |
-| `!battle_history [#TAG]` | `!savas_gecmisi` | Son 25 maçın detaylı analizi |
-| `!deck_analysis #TAG` | `!deste_analiz` | Oyuncu deste/kart kullanım analizi |
+| `!profile [#TAG / @user]` | `!profil` | Detailed player profile |
+| `!activity` | `!aktivite` | Activity score for all members (0-100) |
+| `!kicklist [number]` | — | Lowest-scoring N members (default 5) |
+| `!promotion` | `!terfi` | Elder/Co-Leader promotion suggestion |
+| `!promotion_history #TAG` | `!terfi_gecmis` | A player's activity score history |
+| `!graph` | `!grafik` | Clan vs. opponent fame history chart |
+| `!player_board [#TAG]` | `!oyuncu_tablo` | Weekly war performance table |
+| `!prediction [extra]` | `!tahmin` | War outcome prediction via normal distribution |
+| `!battle_history [#TAG]` | `!savas_gecmisi` | Detailed analysis of the last 25 battles |
+| `!deck_analysis #TAG` | `!deste_analiz` | Player deck/card usage analysis |
 
 </details>
 
 <details>
-<summary><strong>🏅 Rozetler ve Desteler</strong></summary>
+<summary><strong>🏅 Badges & Decks</strong></summary>
 
-| Komut | Alias | Açıklama |
+| Command | Alias | Description |
 | --- | --- | --- |
-| `!badges [#TAG]` | `!rozetlerim` | Kazanılan rozetler |
-| `!badge_leaderboard` | `!rozet_siralamasi` | Rozet liderlik tablosu |
-| `!all_badges` | `!rozetler` | Tüm rozet açıklamaları |
-| `!deck` | `!deste` | Rastgele meta deste önerisi |
-| `!suggest_deck [arena]` | `!deste_oner` | Arena seviyesine göre meta deste |
-| `!random_deck` | `!deste_rastgele` | Tamamen rastgele eğlence destesi |
-| `!meta` | — | Tüm meta desteleri listeler |
+| `!badges [#TAG]` | `!rozetlerim` | Earned badges |
+| `!badge_leaderboard` | `!rozet_siralamasi` | Badge leaderboard |
+| `!all_badges` | `!rozetler` | Descriptions of all badges |
+| `!deck` | `!deste` | Random meta deck suggestion |
+| `!suggest_deck [arena]` | `!deste_oner` | Meta deck suited to an arena level |
+| `!random_deck` | `!deste_rastgele` | Completely random fun deck |
+| `!meta` | — | Lists all meta decks |
 
 </details>
 
 <details>
-<summary><strong>💰 Bağış</strong></summary>
+<summary><strong>💰 Donations</strong></summary>
 
-| Komut | Alias | Açıklama |
+| Command | Alias | Description |
 | --- | --- | --- |
-| `!donations` | `!bagis` | Klan bağış liderlik tablosu |
-| `!leechers` | `!somuruculer` | Ortalamanın altında bağış yapıp fazla alanlar |
+| `!donations` | `!bagis` | Clan donation leaderboard |
+| `!leechers` | `!somuruculer` | Members who donate below average but receive more |
 
 </details>
 
 <details>
-<summary><strong>📢 Kanal Yönetimi</strong> <sub>(Admin gerektirir)</sub></summary>
+<summary><strong>📢 Channel Management</strong> <sub>(requires Admin)</sub></summary>
 
-| Komut | Alias | Açıklama |
+| Command | Alias | Description |
 | --- | --- | --- |
-| `!set_channel <tip> #kanal` | `!kanal_ayar` | Bildirim kanalı atar |
-| `!remove_channel <tip>` | `!kanal_kaldir` | Kanal atamasını kaldırır |
-| `!list_channels` | `!kanal_liste` | Tüm kanal atamalarını gösterir |
-| `!test_channel <tip / all>` | `!kanal_test` | Test mesajı gönderir |
+| `!set_channel <type> #channel` | `!kanal_ayar` | Assigns a notification channel |
+| `!remove_channel <type>` | `!kanal_kaldir` | Removes a channel assignment |
+| `!list_channels` | `!kanal_liste` | Shows all channel assignments |
+| `!test_channel <type / all>` | `!kanal_test` | Sends a test message |
 
 </details>
 
 <details>
-<summary><strong>🏆 Kayıtlar ve Sistem</strong></summary>
+<summary><strong>🏆 Records & System</strong></summary>
 
-| Komut | Alias | Açıklama |
+| Command | Alias | Description |
 | --- | --- | --- |
-| `!records` | `!rekorlar` | Tüm klan rekorları |
-| `!record_history [kategori]` | `!rekor_gecmis` | Kırılan rekorların geçmişi |
-| `!reset_record [kategori]` <sub>(Admin)</sub> | `!rekor_sifirla` | Rekorları sıfırlar |
-| `!weekly` | `!haftalik` | Anlık haftalık rapor |
-| `!weekly_setting` | `!haftalik_ayar` | Otomatik raporu aç/kapat |
-| `!language <en/tr>` | `!dil` | Sunucu dilini değiştirir |
-| `!grant_auth @kişi` <sub>(Admin/Leader)</sub> | `!yetki_ver` | Bot kullanım yetkisi verir |
-| `!revoke_auth @kişi` <sub>(Admin/Leader)</sub> | `!yetki_al` | Bot kullanım yetkisini alır |
-| `!help` | `!yardim` | Tüm komutları listeler |
+| `!records` | `!rekorlar` | All clan records |
+| `!record_history [category]` | `!rekor_gecmis` | History of broken records |
+| `!reset_record [category]` <sub>(Admin)</sub> | `!rekor_sifirla` | Resets records |
+| `!weekly` | `!haftalik` | Instant weekly report |
+| `!weekly_setting` | `!haftalik_ayar` | Toggles the automatic report on/off |
+| `!language <en/tr>` | `!dil` | Changes the guild's language |
+| `!grant_auth @member` <sub>(Admin/Leader)</sub> | `!yetki_ver` | Grants bot usage authorization |
+| `!revoke_auth @member` <sub>(Admin/Leader)</sub> | `!yetki_al` | Revokes bot usage authorization |
+| `!help` | `!yardim` | Lists all commands |
 
 </details>
 
 <details>
-<summary><strong>🌐 RoyaleAPI Ek Veri</strong> <sub>(deneysel, web scraping tabanlı)</sub></summary>
+<summary><strong>🌐 RoyaleAPI Extras</strong> <sub>(experimental, web-scraping based)</sub></summary>
 
-| Komut | Açıklama |
+| Command | Description |
 | --- | --- |
-| `!royaleapi [#TAG]` | RoyaleAPI sayfasından ek klan istatistiği çeker |
+| `!royaleapi [#TAG]` | Fetches extra clan stats from the RoyaleAPI website |
 
-> Bu komut, resmi Clash Royale API'sinin dışında, RoyaleAPI ve benzeri üçüncü parti sitelerin HTML/iç yapısını okuyarak çalışır. Sitelerin yapısı değiştiğinde önceden haber vermeksizin bozulabilir; bu durumda komut sessizce "veri alınamadı" mesajı döner, bot çökmez.
+> This command works outside the official Clash Royale API, by reading the HTML/internal structure of RoyaleAPI and similar third-party sites. It can break without warning whenever those sites change. On failure it simply returns a "couldn't fetch data" message — it won't crash the bot.
 
 </details>
 
 ---
 
-## 🌍 Çoklu Dil (i18n)
+## 🌍 Multi-Language (i18n)
 
-- **Varsayılan dil:** İngilizce (`en`)
-- **Mevcut diller:** İngilizce (`en`), Türkçe (`tr`)
-- Her Discord sunucusu kendi dil tercihini `!language` / `!dil` komutuyla ayarlayabilir; bu tercih veritabanında sunucuya özel olarak saklanır.
-- Yeni bir dil eklemek için `locales/` klasörüne `en.json` yapısını birebir taklit eden yeni bir `[dil].json` dosyası ekleyin. `check.py` betiği iki dosya arasındaki anahtar tutarlılığını (parity) doğrular.
+- **Default language:** English (`en`)
+- **Available languages:** English (`en`), Turkish (`tr`)
+- Each Discord server can set its own language preference with `!language` / `!dil`; the preference is stored per-guild in the database.
+- To add a new language, create a `[lang].json` file in `locales/` that mirrors the structure of `en.json` exactly. The `check.py` script verifies key parity between the two files.
 
 ```bash
 python3 check.py
@@ -258,114 +258,114 @@ python3 check.py
 
 ---
 
-## 🗂️ Proje Yapısı
+## 🗂️ Project Structure
 
 ```text
 clashbot/
-├── cogs/                        # Modüler bot komutları
-│   ├── achievements.py          # Rozet sistemi
-│   ├── activity.py              # Aktivite skoru ve kick listesi
-│   ├── auth.py                  # Yetkilendirme (global check burada tanımlı)
-│   ├── battle_history.py        # Maç geçmişi analizi
-│   ├── channel_manager.py       # Bildirim kanalı yönetimi
-│   ├── deck_suggest.py          # Meta deste önerici
-│   ├── donations.py             # Bağış takibi
-│   ├── prediction.py            # Savaş sonucu tahmini
-│   ├── profile.py               # Oyuncu profil analizi
-│   ├── promotion.py             # Terfi önerileri
-│   ├── records.py               # Klan rekorları
-│   ├── scraper.py               # RoyaleAPI / RCM web scraping (deneysel)
-│   ├── settings.py              # Sunucu ayarları & dil
-│   ├── stats.py                 # matplotlib grafik ve tablo
-│   ├── tracker.py               # Değişiklik takibi & üye giriş/çıkış
-│   ├── war.py                   # Savaş komutları, üye tag'leri, hatırlatıcı
-│   └── weekly_report.py         # Haftalık rapor
-├── data/                        # İlk çalıştırmada otomatik oluşur (.gitignore'da)
-│   ├── clashbot.db              # Ana SQLite veritabanı
-│   ├── authorized_users.json    # Yetkili kullanıcı listesi
-│   ├── channel_config.json      # Kanal yapılandırması (bot geneli, sunucuya özel değil)
-│   ├── clan_records.json        # Klan rekorları
-│   └── linked_accounts.json     # Discord ↔ CR hesap eşlemesi
-├── utils/                       # Yardımcı modüller
-│   ├── channels.py              # Kanal yönetim modülü
-│   ├── config.py                # .env okuma ve ayarlar
-│   ├── cr_api.py                # Clash Royale API istemcisi
+├── cogs/                        # Modular bot commands
+│   ├── achievements.py          # Badge system
+│   ├── activity.py              # Activity score and kick list
+│   ├── auth.py                  # Authorization (the global check lives here)
+│   ├── battle_history.py        # Battle history analysis
+│   ├── channel_manager.py       # Notification channel management
+│   ├── deck_suggest.py          # Meta deck suggester
+│   ├── donations.py             # Donation tracking
+│   ├── prediction.py            # War result prediction
+│   ├── profile.py               # Player profile analysis
+│   ├── promotion.py             # Promotion suggestions
+│   ├── records.py               # Clan records
+│   ├── scraper.py               # RoyaleAPI / RCM web scraping (experimental)
+│   ├── settings.py              # Server settings & language
+│   ├── stats.py                 # matplotlib chart and table
+│   ├── tracker.py               # Change tracking & member join/leave
+│   ├── war.py                   # War commands, member tags, reminders
+│   └── weekly_report.py         # Weekly report
+├── data/                        # Auto-created on first run (in .gitignore)
+│   ├── clashbot.db              # Main SQLite database
+│   ├── authorized_users.json    # Authorized user list
+│   ├── channel_config.json      # Channel configuration (bot-wide, not per-guild)
+│   ├── clan_records.json        # Clan records
+│   └── linked_accounts.json     # Discord ↔ CR account mapping
+├── utils/                       # Utility modules
+│   ├── channels.py              # Channel management module
+│   ├── config.py                # .env reading and settings
+│   ├── cr_api.py                # Clash Royale API client
 │   ├── database.py              # SQLite wrapper
-│   └── i18n.py                  # Çoklu dil motoru
-├── locales/                     # Dil dosyaları
+│   └── i18n.py                  # Multi-language engine
+├── locales/                     # Language files
 │   ├── en.json
 │   └── tr.json
-├── main.py                      # Bot giriş noktası
-├── check.py                     # Locale anahtar tutarlılık kontrolü
+├── main.py                      # Bot entry point
+├── check.py                     # Locale key parity checker
 ├── requirements.txt
 ├── .env.example
-└── .env                         # Git'e dahil değil
+└── .env                         # Not committed to git
 ```
 
 ---
 
-## ⏱️ Otomatik Görevler
+## ⏱️ Automated Tasks
 
-| Görev | Sıklık | Açıklama |
+| Task | Frequency | Description |
 | --- | --- | --- |
-| Değişiklik takibi | 10 dk | Bağış/savaş değişikliklerini algılar |
-| Üye giriş/çıkış | 2 dk | Katılan/ayrılan/atılan üyeleri bildirir |
-| Savaş hatırlatıcı | 30 dk | Savaş bitişine yakın deste uyarısı |
-| Toplu rapor | 60 dk | Biriken değişiklikleri tek embed'de gönderir |
-| Periyodik klan raporu | 2 saat | Klan durum özeti |
-| Aktivite skoru | 6 saat | Tüm üyelerin skorunu veritabanına kaydeder |
-| Rozet kontrolü | 6 saat | Yeni kazanılan rozetleri kontrol eder |
-| Haftalık rapor | Pzt 08:00 (UTC) | Otomatik performans raporu |
+| Change tracking | 10 min | Detects donation/war changes |
+| Member join/leave | 2 min | Reports joined/left/kicked members |
+| War reminder | 30 min | Deck warning near end of the war |
+| Batched report | 60 min | Sends accumulated changes as a single embed |
+| Periodic clan report | 2 hours | Clan status summary |
+| Activity score | 6 hours | Saves all members' scores to the database |
+| Badge check | 6 hours | Checks for newly earned badges |
+| Weekly report | Mon 08:00 (UTC) | Automatic performance report |
 
 ---
 
-## 🗄️ Veritabanı
+## 🗄️ Database
 
-Bot, verinin bütünlüğünü korumak ve I/O işlemlerini asenkron yürütmek için `aiosqlite` kullanır. Veritabanı (`data/clashbot.db`) ilk çalıştırmada otomatik oluşturulur.
+The bot uses `aiosqlite` for data integrity and non-blocking async I/O. The database (`data/clashbot.db`) is created automatically on first run.
 
-| Tablo | İçerik |
+| Table | Contents |
 | --- | --- |
-| `players` | Oyuncu anlık verisi (kupa, seviye, bağış, vb.) |
-| `donation_history` / `war_history` | Haftalık performans kayıtları |
-| `activity_log` | Günlük aktivite skoru (zaman serisi analizi için) |
-| `trophy_snapshots` | Günlük kupa anlık görüntüsü |
-| `achievements` | Kazanılan rozetler *(`achievements.py` cog'u tarafından ilk çağrıda oluşturulur, merkezi şemanın parçası değildir)* |
-| `server_settings` | Sunucuya özel ayarlar (tercih edilen dil vb.) |
+| `players` | Player snapshot data (trophies, level, donations, etc.) |
+| `donation_history` / `war_history` | Weekly performance records |
+| `activity_log` | Daily activity score (for time-series analysis) |
+| `trophy_snapshots` | Daily trophy snapshot |
+| `achievements` | Earned badges *(created lazily by the `achievements.py` cog on first use, not part of the central schema)* |
+| `server_settings` | Per-guild settings (e.g. preferred language) |
 
 ---
 
-## 🛡️ Güvenlik
+## 🛡️ Security
 
-- **SQL Injection koruması:** Veritabanı sorgularında izin verilen kolon adları whitelist ile kontrol edilir.
-- **Rol tabanlı yetkilendirme:** Leader izni, metin bazlı rol isimleri yerine Discord Rol ID'si üzerinden doğrulanır (spoofing koruması).
-- **Eşzamanlılık güvenliği:** JSON dosya işlemleri `asyncio.Lock` / `threading.Lock` ile korunur.
-- **API token güvenliği:** Hassas bilgiler `.env` dosyasında tutulur ve `.gitignore` ile sürüm kontrolünün dışında bırakılır.
-
----
-
-## ⚠️ Bilinen Sınırlamalar
-
-Bu bölüm, projeyi kendi sunucunuzda çalıştırmadan önce bilmenizde fayda olan noktaları özetler:
-
-- **Tek klan / bot geneli kanal yapılandırması:** `channel_config.json` sunucuya göre değil, bot sürecine göre tutulur. Bot birden fazla sunucuya eklenirse kanal atamaları sunucular arasında paylaşılır (üzerine yazılır).
-- **`scraper.py` deneyseldir:** RoyaleAPI ve RoyaleClanManager gibi üçüncü parti sitelerin HTML/iç yapısına bağımlıdır; bu siteler değiştiğinde önceden haber vermeksizin bozulabilir. Hata durumunda bot çökmez, ilgili komut sadece veri döndürmez.
-- **Test altyapısı yoktur:** Repo içinde birim test / CI pipeline bulunmuyor; `check.py` yalnızca locale dosyaları arasındaki anahtar tutarlılığını kontrol eder.
-- **Varsayılan olarak kilitli:** Yukarıda [Yetkilendirme Modeli](#-yetkilendirme-modeli) bölümünde açıklandığı gibi, `LEADER_ROLE_ID` doğru ayarlanmadan hiçbir komut (yönetim komutları dahil, bilgi komutları dahil) çalışmaz.
+- **SQL injection protection:** Allowed column names in database queries are checked against a whitelist.
+- **Role-based authorization:** Leader permission is verified via the Discord role ID rather than text-based role names (spoofing protection).
+- **Concurrency safety:** JSON file operations are protected with `asyncio.Lock` / `threading.Lock`.
+- **API token security:** Sensitive values live in `.env` and are excluded from version control via `.gitignore`.
 
 ---
 
-## 🤝 Katkıda Bulunma
+## ⚠️ Known Limitations
 
-1. Depoyu fork'layın.
-2. Yeni bir özellik dalı oluşturun: `git checkout -b feature/yeni-ozellik`
-3. Değişikliklerinizi commit'leyin: `git commit -m 'feat: yeni özellik eklendi'`
-4. Dalınızı push'layın: `git push origin feature/yeni-ozellik`
-5. Bir Pull Request açın.
+Worth knowing before you self-host this bot:
+
+- **Bot-wide, not per-guild, channel configuration:** `channel_config.json` is scoped to the bot process, not to individual servers. If the bot is added to multiple Discord servers, channel assignments are shared (and overwritten) across all of them.
+- **`scraper.py` is experimental:** it depends on the HTML/internal structure of third-party sites like RoyaleAPI and RoyaleClanManager and can break without warning whenever those sites change. On failure it degrades gracefully — the bot doesn't crash, the affected command just returns no data.
+- **No test infrastructure:** there's no unit test suite or CI pipeline in the repo; `check.py` only verifies key parity between locale files.
+- **Locked by default:** as described in [Authorization Model](#-authorization-model), no command — including read-only ones — works until `LEADER_ROLE_ID` is set correctly or the user has Administrator permission.
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repo.
+2. Create a feature branch: `git checkout -b feature/new-feature`
+3. Commit your changes: `git commit -m 'feat: added new feature'`
+4. Push your branch: `git push origin feature/new-feature`
+5. Open a Pull Request.
 
 ---
 
 <div align="center">
 
-📄 Lisans: [MIT](LICENSE)
+📄 License: [MIT](LICENSE)
 
 </div>
