@@ -117,14 +117,15 @@ LEADER_ROLE_ID=discord_leader_role_id
 
 > **⚠️ Important:** If `LEADER_ROLE_ID` is not set, only users with Discord Administrator permissions can use bot management commands (`!grant_perm`, `!revoke_perm`). This value must be entered correctly to authorize via the Leader role.
 
+```markdown
 To start the bot:
 
 ```bash
-# With the virtual environment active:
-python3 main.py
+# If the virtual environment is active:
+python main.py
 
-# Or directly with Python in the virtual environment:
-.venv/bin/python3 main.py
+# Or without activating the virtual environment:
+.venv/bin/python main.py
 ```
 
 ---
