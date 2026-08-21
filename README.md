@@ -77,15 +77,20 @@ Clashbot supports a dynamic internationalization system.
 git clone https://github.com/omerk-c/Clash-Royale-Clan-Bot
 cd Clash-Royale-Clan-Bot
 
-# Create and activate a virtual environment
+# Create a virtual environment
 python3 -m venv .venv
-source .venv/bin/activate  # For Windows: .venv\Scripts\activate
 
-# Install dependencies
-pip3 install -r requirements.txt
+# Activate the virtual environment
+source .venv/bin/activate  # Linux/macOS
+# Windows: .venv\Scripts\activate
+
+# Install dependencies inside the virtual environment
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 
 # Create the environment variables file
 cp .env.example .env
+
 # Edit the .env file and enter your own token/key values
 ```
 
